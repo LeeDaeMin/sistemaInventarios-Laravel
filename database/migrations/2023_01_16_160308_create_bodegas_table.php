@@ -16,9 +16,12 @@ return new class extends Migration
         Schema::create('bodegas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->foreignId('user_id')->reference('id')->on('usuarios');
-            $table->tiniyint('estado');
+            $table->unsignedBigInteger('id_responsable');
+            $table->tinyInteger('estado');
             $table->timestamps();
+
+            $table->foreign('id_responsable')->references('id')
+                ->on('usuarios');
         });
     }
 

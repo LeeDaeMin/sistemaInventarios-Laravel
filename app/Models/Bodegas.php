@@ -10,7 +10,6 @@ class Bodegas extends Model
     use HasFactory;
 
     protected $fillaname = [
-        'nombre',
-        'estado'
+        'nombre'
     ];
 }
