@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Inventarios extends Model
 {
     use HasFactory;
+
+    protected $fillaname = [
+        'cantidad'
+    ];
 }

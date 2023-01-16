@@ -8,79 +8,66 @@ use App\Http\Requests\UpdateBodegasRequest;
 
 class BodegasController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    // see all Bodegas
+    public function index(){
+        try{
+            $request = Bodegas::all();
+            return response()->json($request);
+        } catch(\Exception $e){
+            return response()->json(['Error'=> $e->getMessaege()], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    // see one Bodega
+    public function show($id){
+        try{
+            $request = Bodega::find($id);
+            return response()->json($request);
+        }catch(\Exception $e){
+            return response()->json(['Error'=> $e->getMessaege()], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreBodegasRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreBodegasRequest $request)
-    {
-        //
+    // create Bodega
+    public function create(Request $bodega){
+        try{
+            $bodega->validate([
+                'nombre'=>'required|string'
+            ]);
+            $request = Bodega::create([
+                'nombre' => $bodega -> nombre
+            ]);
+        } catch(\Exception $e){
+            return response()->json(['Error'=> $e->getMessaege()], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Bodegas  $bodegas
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Bodegas $bodegas)
-    {
-        //
+    // update Bodega
+    public function update(Request $bodega, $id){
+        try{
+            $bodega->validate([
+                'nombre'=>'required|string'
+            ]);
+            $request = Bodega::find($id);
+            $request->update($request->all());
+            return response()->json([
+                'message' => 'Bodega actualizado correctamente'
+            ]);
+        } catch(\Exception $e){
+            return response()->json(['Error'=> $e->getMessaege()], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Bodegas  $bodegas
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Bodegas $bodegas)
-    {
-        //
-    }
+    // Delete Bodega
+    public function delete($id){
+        try{
+            $request = Bodega::find($id);
+            $request->delete();
+            return response()->json($request);
+        }  catch(\Exception $e){
+            return response()->json(['Error'=> $e->getMessaege()], 500);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateBodegasRequest  $request
-     * @param  \App\Models\Bodegas  $bodegas
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateBodegasRequest $request, Bodegas $bodegas)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Bodegas  $bodegas
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Bodegas $bodegas)
-    {
-        //
+        return response()->json(['Ok' => 'Bodega eliminada Correctamente'], 200);
     }
 }

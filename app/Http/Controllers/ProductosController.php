@@ -8,79 +8,79 @@ use App\Http\Requests\UpdateProductosRequest;
 
 class ProductosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+   // see all Products
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+   public function index(){
+        try{
+            $producto = Productos::all();
+            return response()->json($producto);
+        } catch(\Exception $e){
+            return response()->json(['Erro' => $e->getMessage()], 500);
+        }
+   }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreProductosRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreProductosRequest $request)
-    {
-        //
-    }
+   // see one Product
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Productos  $productos
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Productos $productos)
-    {
-        //
-    }
+   public function show(){
+        try{
+            $request = Productos::find();
+            return response()->json($request);
+        } catch(\Exeception $e){
+            return response()->json(['Error' => $e->getMessage], 500);
+        }
+   }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Productos  $productos
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Productos $productos)
-    {
-        //
-    }
+   // Create Product
+   public function create(Request $productos){
+        try{
+            $productos->validate([
+                'nombre'=>'required|string|max:20',
+                'descripcion' => 'required|string|max:255',
+                'estado' => 'required|integer'
+            ]);
+            $productos = Productos::create([
+                'nombre' => $productos -> nombre,
+                'descripcion' => $productos -> descripcion,
+                'estado' => $productos -> estado
+            ]);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateProductosRequest  $request
-     * @param  \App\Models\Productos  $productos
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateProductosRequest $request, Productos $productos)
-    {
-        //
-    }
+        return response()->json(['Ok' => 'Usuario Creado correctamente'], 200);
+   }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Productos  $productos
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Productos $productos)
-    {
-        //
-    }
+   //Update Product
+
+   public function update(Request $request, $id){
+        try{
+            $request->validate([
+                'nombre'=>'required|string|max:20',
+                'descripcion' => 'required|string|max:255',
+                'estado' => 'required|integer'
+            ]);
+            $productos = Productos::find($id);
+            $productos->update($request->all());
+            return response->json([
+                'message' => 'Producto Actualizado Exitosamente',
+                'productos' => $productos
+            ]);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+   }
+
+   //Delete Product
+
+   public function delete($id){
+        try{
+            $producto = Productos::find($id);
+            $producto->delete();
+            return response()->json($producto);
+        }catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+        return response()->json(['Ok' => 'Usuario eliminado correctamente'], 200);
+   }
+
 }

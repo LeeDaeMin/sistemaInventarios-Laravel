@@ -8,80 +8,64 @@ use App\Http\Requests\UpdateInventariosRequest;
 
 class InventariosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    // see all Inventario
+    public function index(){
+        try{
+            $inventarios = Inventarios::all();
+            return response()->json($inventarios);
+        } catch(\Exception $e){
+            return response()->json(['Error'=>$e->getMessage()], 500);
+        }
     }
 
-    /**
-        
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    // see one Inventario specif
+
+    public function show($id){
+        try{
+            $inventarios = Inventarios::find($id);
+            return response()->json($inventarios);
+        } catch(\Exception $e){
+            return response()->json(['Error'=> $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreInventariosRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreInventariosRequest $request)
-    {
-        //
+    // add Inventario
+
+    public function create(Request $inventario){
+        try{
+            $inventario->validator([
+                'cantidad'=>'required|integer'
+            ]);
+
+            $inventario = Inventarios::create([
+                'cantidad' => $inventario -> cantidad
+            ]);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+
+        return response()->json(['OK'=> "Inventarioa Creado Exitosamente"]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Inventarios  $inventarios
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Inventarios $inventarios)
-    {
-        //
+    // update Inventario
+    public function update(Request $request, $id){
+        try{
+            $request = Inventarios::find($id);
+            $request->create($request->all());
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+        return response()->json(['OK' => 'Inventario Actualizado exitosamente']);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Inventarios  $inventarios
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Inventarios $inventarios)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateInventariosRequest  $request
-     * @param  \App\Models\Inventarios  $inventarios
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateInventariosRequest $request, Inventarios $inventarios)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Inventarios  $inventarios
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Inventarios $inventarios)
-    {
-        //
+    //delete one Inventario
+    public function delete($id){
+        try{
+            $inventario = Inventarios::find($id);
+            $inventario->delete();
+            return response()->json($inventario);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
     }
 }

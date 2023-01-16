@@ -8,79 +8,72 @@ use App\Http\Requests\UpdateHistorialesRequest;
 
 class HistorialesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    // see all Historiales
+    public function index(){
+        try{
+            $request = Historiales::all();
+            return request()->json($request);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    // see one Historial
+    public function show($id){
+        try{
+            $request = Historiales::find($id);
+            return response()->json($request);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreHistorialesRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreHistorialesRequest $request)
-    {
-        //
+    // create Historiales
+    public function create(Request $request){
+        try{
+            $historiales->validate([
+                'cantidad'=> 'required|string'
+            ]);
+            $historiales = Historiales::create([
+                'cantidad' => $historiales -> cantidad
+            ]);
+            return response()->json($historiales);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+
+        return response()->json(['OK' => "Historia Creada Exitosamente"]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Historiales  $historiales
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Historiales $historiales)
-    {
-        //
-    }
+    // update Historiales
+    public function update(Request $request, $id){
+        try{
+            $request->validate([
+                'cantidad'=> 'required|string'
+            ]);
+            $historial = Historiales::find($id);
+            $historial->update($request->all());
+            return response()->json([
+                'message'=> 'Historial Actualizado Exitosamente',
+                'historial' => $historial
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Historiales  $historiales
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Historiales $historiales)
-    {
-        //
-    }
+            ]);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateHistorialesRequest  $request
-     * @param  \App\Models\Historiales  $historiales
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateHistorialesRequest $request, Historiales $historiales)
-    {
-        //
     }
+    //delete Historiales
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Historiales  $historiales
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Historiales $historiales)
-    {
-        //
+    public function delete($id){
+        try{
+            $request = Historiales::find($id);
+            $request->delete();
+            return response()->json($request);
+        } catch(\Exception $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+
+        return response()->json(['OK' => "Historia Borrada Exitosamente"]);
     }
 }
