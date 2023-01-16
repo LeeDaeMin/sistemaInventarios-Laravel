@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Historiales extends Model
 {
     use HasFactory;
+
+    protected $fillaname = [
+        'cantidad',
+    ];
 }
