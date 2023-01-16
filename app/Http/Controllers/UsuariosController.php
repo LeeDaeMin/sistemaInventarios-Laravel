@@ -8,79 +8,80 @@ use App\Http\Requests\UpdateUsuariosRequest;
 
 class UsuariosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    // see all users
+
     public function index()
     {
-        //
+        try{
+            $usuarios = Usuario::all();
+            return response()->json($usuarios);
+        } catch(\Exception $e){
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    // see one user
+
+    public function show()
     {
-        //
+        try{
+            $usuario = Usuario::find($id);
+            return response()->json($usuario);
+        } catch(\Exception $e){
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreUsuariosRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreUsuariosRequest $request)
+    // create user
+
+    public function create(Request $usuarios)
     {
-        //
+        try{
+            $usuarios->validate([
+                'nombre' => 'required|string|max:20',
+                'fotos' => 'required|string',
+                'estado' => 'required|integer',
+            ]);
+            $usuarios = Usuarios::create([
+                'nombre' => $usuarios->nombre,
+                'fotos' => $usuarios->fotos,
+                'estado' => $usuarios->estado,
+            ]);
+            } catch(\Exception $e){
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Usuarios $usuarios)
-    {
-        //
+    // update user
+
+    public function update(Request $request, $id){
+        try{
+            $request->validate([
+                'nombre' => 'required|string',
+                'fotos' => 'required|string',
+                'estado' => 'required|integer',
+            ]);
+            $usuario = Usuarios::find($id);
+            $usuario->update($request->all());
+            return response()->json([
+                'message' => 'Usuario actualizado correctamente',
+                'usuario' => $usuario
+            ]);
+        } catch(\Execption $e){
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Usuarios $usuarios)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateUsuariosRequest  $request
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateUsuariosRequest $request, Usuarios $usuarios)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Usuarios $usuarios)
-    {
-        //
+    // delete user
+    public function delete($id){
+        try{
+            $usuario = Usarios::find($id);
+            $usuario->delete();
+            return response()->json($usuario);
+        } catch(\Exception $e){
+            return responde()->json(['Error' => $e->getMessage()], 500);
+        }
+        return response()->json(['Ok' => 'Usuario eliminado correctamente'], 200);
     }
 }
